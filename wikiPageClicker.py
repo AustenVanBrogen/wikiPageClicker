@@ -27,5 +27,9 @@ for i in substr:
         if(isinstance(j, str) and j.find(i)==0 and j not in filteredLinks):
             filteredLinks.append(j)
 
+#Clears aTags and links to save resources
+links.clear()
+aTags.clear()
+
 for i in filteredLinks:
     print(i)
