@@ -1,10 +1,13 @@
 from bs4 import BeautifulSoup
 import requests
 
-wikiUrl = "https://en.wikipedia.org/wiki/Garfield"
+wikiUrlList = ["", ""]
+wikipediaURLFront = "https://en.wikipedia.org"
+wikipediaURLFrontLength = 24
 substr = ['/wiki/']
 
 def fitsCriteria(link):
+    #This could probably be rewritten with a list and a for loop but whatever
     if(link.find('/wiki/Category:') != -1):
         return False
     if(link.find('/wiki/Help:') != -1):
@@ -31,7 +34,7 @@ def fitsCriteria(link):
         return False
     return True
 
-def checkPage(curURL, depth):
+def checkPage(curURL, endUrl, depth):
     try:
         links = []
         filteredLinks = []
@@ -61,4 +64,29 @@ def checkPage(curURL, depth):
     except:
         return ''
 
-checkPage("/wiki/Garfield", 0)
+def getWikiLinks(urlList):
+
+    urlFinished = False
+    while(not urlFinished):
+        tempUrl = input("Enter the starting wikipedia link: ")
+        if(tempUrl == ""):
+            urlList[0] = "/wiki/Garfield"
+            urlFinished = True
+        elif(tempUrl.find("https://en.wikipedia.org") != -1 and len(tempUrl) > wikipediaURLFrontLength):
+            urlList[0] = tempUrl[wikipediaURLFrontLength:]
+            urlFinished = True
+
+    urlFinished = False
+    while(not urlFinished):
+        tempUrl = input("Enter the ending wikipedia link: ")
+        if(tempUrl == ""):
+            urlList[1] = "/wiki/Count_Dracula"
+            urlFinished = True
+        elif(tempUrl.find("https://en.wikipedia.org") != -1 and len(tempUrl) > wikipediaURLFrontLength):
+            urlList[1] = tempUrl[wikipediaURLFrontLength:]
+            urlFinished = True
+
+getWikiLinks(wikiUrlList)
+print(wikiUrlList[0])
+print(wikiUrlList[1])
+checkPage(wikiUrlList[0], wikiUrlList[1], 0)
