@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import sys
 
 wikiUrlList = ["", ""]
 wikipediaURLFront = "https://en.wikipedia.org"
@@ -68,7 +69,11 @@ def getWikiLinks(urlList):
 
     urlFinished = False
     while(not urlFinished):
-        tempUrl = input("Enter the starting wikipedia link: ")
+        if (sys.argv.index("-a") != -1):
+            #Index of the string after the flag for the first article
+            tempUrl = sys.argv[sys.argv.index("-a") + 1]
+        else:
+            tempUrl = input("Enter the starting wikipedia link: ")
         if(tempUrl == ""):
             urlList[0] = "/wiki/Garfield"
             urlFinished = True
@@ -78,7 +83,11 @@ def getWikiLinks(urlList):
 
     urlFinished = False
     while(not urlFinished):
-        tempUrl = input("Enter the ending wikipedia link: ")
+        if (sys.argv.index("-b") != -1):
+            #Index of the string after the flag for the first article
+            tempUrl = sys.argv[sys.argv.index("-b") + 1]
+        else:
+            tempUrl = input("Enter the starting wikipedia link: ")
         if(tempUrl == ""):
             urlList[1] = "/wiki/Count_Dracula"
             urlFinished = True
@@ -86,7 +95,6 @@ def getWikiLinks(urlList):
             urlList[1] = tempUrl[wikipediaURLFrontLength:]
             urlFinished = True
 
+
 getWikiLinks(wikiUrlList)
-print(wikiUrlList[0])
-print(wikiUrlList[1])
 checkPage(wikiUrlList[0], wikiUrlList[1], 0)
