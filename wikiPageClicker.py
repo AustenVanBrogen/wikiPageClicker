@@ -6,6 +6,9 @@ wikiUrlList = ["", ""]
 wikipediaURLFront = "https://en.wikipedia.org"
 wikipediaURLFrontLength = 24
 substr = ['/wiki/']
+maxDepth = 30
+fullWikiPath = []
+visitedWikis = []
 
 def fitsCriteria(link):
     #This could probably be rewritten with a list and a for loop but whatever
@@ -35,10 +38,17 @@ def fitsCriteria(link):
         return False
     return True
 
-def checkPage(curURL, endUrl, depth):
+def checkPage(curURL, endURL, depth):
+    #print("Currently on " + curURL)
     try:
+        if(curURL == endURL):
+            return [curURL]
+        elif(depth == maxDepth):
+            return []
+        visitedWikis.append(curURL)
         links = []
         filteredLinks = []
+        completeLinkPath = []
 
         pageToScrape = requests.get("https://en.wikipedia.org{}".format(curURL))
         soup = BeautifulSoup(pageToScrape.text, 'html.parser')
@@ -59,17 +69,23 @@ def checkPage(curURL, endUrl, depth):
         links.clear()
         aTags.clear()
 
-        #For testing. Delete Later
-        for i in filteredLinks:
-            print(i)
+        for curFilteredLink in filteredLinks:
+            if(visitedWikis.count(curFilteredLink) == 0):
+                print("made it here")
+                completeLinkPath = checkPage(curFilteredLink, endURL, depth+1)
+                if(len(completeLinkPath) > 0):
+                    completeLinkPath.insert(0, curURL)
+                    return completeLinkPath
+        #Get to the end without satisfying criteria
+        return []
     except:
-        return ''
+        return []
 
 def getWikiLinks(urlList):
 
     urlFinished = False
     while(not urlFinished):
-        if (sys.argv.index("-a") != -1):
+        if (sys.argv.count("-a") != 0):
             #Index of the string after the flag for the first article
             tempUrl = sys.argv[sys.argv.index("-a") + 1]
         else:
@@ -83,8 +99,8 @@ def getWikiLinks(urlList):
 
     urlFinished = False
     while(not urlFinished):
-        if (sys.argv.index("-b") != -1):
-            #Index of the string after the flag for the first article
+        if (sys.argv.count("-b") != 0):
+            #Index of the string after the flag for the second article
             tempUrl = sys.argv[sys.argv.index("-b") + 1]
         else:
             tempUrl = input("Enter the starting wikipedia link: ")
@@ -97,4 +113,9 @@ def getWikiLinks(urlList):
 
 
 getWikiLinks(wikiUrlList)
-checkPage(wikiUrlList[0], wikiUrlList[1], 0)
+fullWikiPath = checkPage(wikiUrlList[0], wikiUrlList[1], 0)
+
+if(len(fullWikiPath) > 0):
+    print(fullWikiPath)
+else:
+    print("No path could be found to the end")
