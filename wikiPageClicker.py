@@ -39,7 +39,6 @@ def fitsCriteria(link):
     return True
 
 def checkPage(curURL, endURL, depth):
-    #print("Currently on " + curURL)
     try:
         if(curURL == endURL):
             return [curURL]
@@ -71,7 +70,6 @@ def checkPage(curURL, endURL, depth):
 
         for curFilteredLink in filteredLinks:
             if(visitedWikis.count(curFilteredLink) == 0):
-                print("made it here")
                 completeLinkPath = checkPage(curFilteredLink, endURL, depth+1)
                 if(len(completeLinkPath) > 0):
                     completeLinkPath.insert(0, curURL)
